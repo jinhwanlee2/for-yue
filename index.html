@@ -176,16 +176,42 @@
     #projects {
       background: var(--cream);
       flex-direction: column;
-      overflow: hidden;
+      overflow-y: auto;
+      align-items: center;
     }
 
     .projects-bg {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 50% at 10% 10%, rgba(240, 160, 170, 0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 90% 90%, rgba(212, 149, 106, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 10% 10%, rgba(240, 160, 170, 0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 90% 90%, rgba(212, 149, 106, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 80% 15%, rgba(232, 100, 122, 0.1) 0%, transparent 55%),
+        radial-gradient(ellipse 35% 30% at 20% 80%, rgba(180, 130, 0, 0.08) 0%, transparent 55%),
         linear-gradient(160deg, #fff8f2 0%, #fdf0f0 50%, #fff5ee 100%);
+    }
+
+    /* floating petals on card/detail pages */
+    .page-petals {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .page-petal {
+      position: absolute;
+      font-size: 1rem;
+      opacity: 0;
+      animation: pagePetalFall linear infinite;
+    }
+
+    @keyframes pagePetalFall {
+      0%   { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 0; }
+      10%  { opacity: 0.35; }
+      90%  { opacity: 0.2; }
+      100% { transform: translateY(110vh) rotate(360deg) translateX(30px); opacity: 0; }
     }
 
     .projects-inner {
@@ -196,8 +222,7 @@
       padding: 3rem 2rem 2rem;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
     }
 
     .projects-header {
@@ -244,11 +269,9 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
       gap: clamp(0.8rem, 2vw, 1.4rem);
-      overflow-y: auto;
-      padding-bottom: 1.5rem;
-      padding-right: 4px;
+      padding-bottom: 2rem;
       flex: 1;
-      align-items: stretch;
+      grid-auto-rows: 1fr;
     }
 
     .grid::-webkit-scrollbar { width: 4px; }
@@ -556,6 +579,7 @@
 <!-- ── PROJECTS ── -->
 <div class="page hidden" id="projects">
   <div class="projects-bg"></div>
+  <div class="page-petals" id="pagePetals"></div>
   <div class="projects-inner">
 
     <div class="projects-header">
@@ -609,6 +633,7 @@
 <!-- ── PROJECT DETAIL PAGE ── -->
 <div class="page hidden" id="detailPage">
   <div class="projects-bg"></div>
+  <div class="page-petals" id="detailPetals"></div>
   <div class="detail-inner">
     <div class="detail-icon" id="dIcon"></div>
     <div class="detail-status-row">
@@ -806,6 +831,30 @@ document.querySelectorAll('.card[data-id]').forEach(card => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') backBtn.click();
 });
+
+// Floating petals on projects & detail pages
+const PAGE_EMOJIS = ['🌸', '🌷', '✿', '❀', '💕', '🌹'];
+
+function spawnPagePetals(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const count = 18;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('span');
+    el.className = 'page-petal';
+    el.textContent = PAGE_EMOJIS[Math.floor(Math.random() * PAGE_EMOJIS.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top = '-20px';
+    el.style.fontSize = (0.7 + Math.random() * 0.8) + 'rem';
+    el.style.animationDuration = (8 + Math.random() * 10) + 's';
+    el.style.animationDelay = (Math.random() * 12) + 's';
+    container.appendChild(el);
+  }
+}
+
+spawnPagePetals('pagePetals');
+spawnPagePetals('detailPetals');
 
 // Falling petals on landing
 const canvas  = document.getElementById('petalCanvas');
