@@ -677,7 +677,8 @@
 
   #dVideo iframe {
     width: 100% !important;
-    height: calc((100vw - 8rem) * 9 / 16) !important;
+    height: calc((min(100vw, 1100px) - 8rem) * 9 / 16) !important;
+    max-height: 500px;
     display: block;
   }
 
